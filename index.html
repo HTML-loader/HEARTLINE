@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Heartline</title>
+<style>
+:root{
+  --bg:#0d0b12;--panel:#17131d;--panel2:#201a28;--text:#f6f0fa;--muted:#aaa0b2;
+  --line:#31283a;--pink:#ff5fa2;--green:#55d88a;--red:#ff6464;--purple:#a77cff;
+}
+*{box-sizing:border-box} body{margin:0;background:radial-gradient(circle at top,#21152b 0,#0d0b12 48%);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh}
+button,input,textarea,select{font:inherit} button{cursor:pointer}
+.wrap{max-width:900px;margin:auto;padding:22px 16px 50px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+h1{font-size:32px;margin:0;letter-spacing:-1px}.sub{color:var(--muted);font-size:13px;margin-top:3px}
+.topbtn,.primary,.ghost,.danger{border:0;border-radius:12px;padding:10px 14px;color:white}
+.topbtn,.primary{background:linear-gradient(135deg,#ff5fa2,#a77cff);font-weight:700}.ghost{background:#241e2b;border:1px solid var(--line)}.danger{background:#4a2029}
+.mainnav{display:flex;gap:8px;margin-bottom:14px}.mainnav button{flex:1;padding:12px;border-radius:13px;border:1px solid var(--line);background:#15111b;color:var(--muted);font-weight:700}.mainnav button.active{background:#2a2033;color:white;border-color:#5a456a}
+.categorybar{display:flex;gap:8px;overflow-x:auto;padding:2px 0 10px}.cat{white-space:nowrap;border:1px solid var(--line);background:#15111b;color:var(--muted);border-radius:999px;padding:9px 14px}.cat.active{background:#34243c;color:white;border-color:#76527f}.cat.add{color:#ff9bc4}
+.toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:8px 0 14px}.count{color:var(--muted);font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.card{background:linear-gradient(180deg,#1b1621,#141119);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 10px 25px #0002}.card:active{transform:scale(.99)}
+.cardhead{display:flex;justify-content:space-between;gap:8px}.name{font-size:20px;font-weight:800}.relation{font-size:12px;color:var(--muted);margin-top:2px}.pill{font-size:11px;background:#2b2232;padding:5px 8px;border-radius:999px;color:#d9cbe0}
+.barlabel{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin:14px 0 5px}.bar{height:9px;background:#302934;border-radius:99px;overflow:hidden}.fill.friend{height:100%;background:linear-gradient(90deg,var(--red),#ffc15a,var(--green));border-radius:99px}.fill.romance{height:100%;background:linear-gradient(90deg,#3a303d,var(--pink));border-radius:99px}
+.empty{padding:38px 20px;text-align:center;border:1px dashed var(--line);border-radius:18px;color:var(--muted)}
+.overlay{position:fixed;inset:0;background:#0009;display:none;align-items:flex-end;justify-content:center;padding:12px;z-index:10}.overlay.show{display:flex}.modal{width:min(700px,100%);max-height:92vh;overflow:auto;background:#17131d;border:1px solid var(--line);border-radius:22px;padding:18px}
+.modal h2{margin:0 0 14px}.field{margin:12px 0}.field label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}.field input,.field textarea,.field select{width:100%;background:#100d14;border:1px solid var(--line);color:white;border-radius:11px;padding:11px}.field textarea{min-height:110px;resize:vertical}.range{width:100%}.modalactions{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+.profileTop{display:flex;justify-content:space-between;gap:10px}.close{background:none;border:0;color:var(--muted);font-size:24px}.note{white-space:pre-wrap;color:#ddd5e2;line-height:1.5;background:#100d14;border-radius:13px;padding:13px}.section{margin-top:20px}.section h3{font-size:14px;margin:0 0 9px;color:#e9ddea}
+.journalList{display:grid;gap:12px}.entry{background:#17131d;border:1px solid var(--line);border-radius:17px;padding:16px}.entry h3{margin:0 0 5px}.entry time{font-size:11px;color:var(--muted)}.entry p{white-space:pre-wrap;line-height:1.5;color:#ddd5e2}.mentions{display:flex;gap:6px;flex-wrap:wrap}.mention{background:#2b2031;color:#ffc2dc;border-radius:999px;padding:5px 8px;font-size:11px}
+.checkgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:7px}.check{display:flex;gap:7px;align-items:center;background:#100d14;border:1px solid var(--line);padding:9px;border-radius:10px;color:#ddd}
+@media(max-width:520px){.wrap{padding:18px 12px 40px}h1{font-size:28px}.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div><h1>♡ Heartline</h1><div class="sub">People, connections & memories</div></div>
+  <button class="topbtn" id="addBtn">＋ Person</button>
+</header>
+
+<div class="mainnav">
+  <button id="peopleTab" class="active">People</button>
+  <button id="journalTab">MyJournal</button>
+</div>
+
+<section id="peopleView">
+  <div class="categorybar" id="categoryBar"></div>
+  <div class="toolbar"><div class="count" id="count"></div><button class="ghost" id="manageCats">Manage tabs</button></div>
+  <div id="peopleGrid" class="grid"></div>
+</section>
+
+<section id="journalView" style="display:none">
+  <div class="toolbar"><div class="count">Your saved journal entries</div><button class="topbtn" id="newEntry">＋ Entry</button></div>
+  <div id="journalList" class="journalList"></div>
+</section>
+</div>
+
+<div class="overlay" id="personOverlay"><div class="modal" id="personModal"></div></div>
+<div class="overlay" id="entryOverlay"><div class="modal" id="entryModal"></div></div>
+<div class="overlay" id="catOverlay"><div class="modal" id="catModal"></div></div>
+
+<script>
+const PKEY='heartline-people-v1', JKEY='heartline-journal-v1', CKEY='heartline-categories-v1';
+let people=JSON.parse(localStorage.getItem(PKEY)||'[]');
+let journal=JSON.parse(localStorage.getItem(JKEY)||'[]');
+let categories=JSON.parse(localStorage.getItem(CKEY)||'[]');
+let activeCat='all', editingPerson=null, editingEntry=null;
+
+function save(){localStorage.setItem(PKEY,JSON.stringify(people));localStorage.setItem(JKEY,JSON.stringify(journal));localStorage.setItem(CKEY,JSON.stringify(categories))}
+function esc(s=''){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function id(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+function personName(pid){return people.find(p=>p.id===pid)?.name||'Unknown'}
+
+function renderCats(){
+ const b=document.getElementById('categoryBar');
+ b.innerHTML='<button class="cat '+(activeCat==='all'?'active':'')+'" onclick="setCat(\'all\')">All</button>'+
+ categories.map(c=>`<button class="cat ${activeCat===c.id?'active':''}" onclick="setCat('${c.id}')">${esc(c.name)}</button>`).join('')+
+ '<button class="cat add" onclick="addCategory()">＋</button>';
+}
+function setCat(c){activeCat=c;renderPeople()}
+function renderPeople(){
+ renderCats();
+ let shown=activeCat==='all'?people:people.filter(p=>(p.categories||[]).includes(activeCat));
+ document.getElementById('count').textContent=shown.length+' '+(shown.length===1?'person':'people');
+ const g=document.getElementById('peopleGrid');
+ if(!shown.length){g.innerHTML=`<div class="empty" style="grid-column:1/-1">${people.length?'No people in this tab yet.':'No people yet — add your first Heartline profile!'}</div>`;return}
+ g.innerHTML=shown.map(p=>`
+ <article class="card" onclick="openPerson('${p.id}')">
+   <div class="cardhead"><div><div class="name">${esc(p.name)}</div><div class="relation">${esc(p.relationship||'No relationship set')}</div></div><span class="pill">Tap to open</span></div>
+   <div class="barlabel"><span>Friendship ↔ Enemy</span><b>${p.friendship||0}%</b></div>
+   <div class="bar"><div class="fill friend" style="width:${p.friendship||0}%"></div></div>
+   ${(p.romance||0)>0?`<div class="barlabel"><span>Romantic interest</span><b>${p.romance}%</b></div><div class="bar"><div class="fill romance" style="width:${p.romance}%"></div></div>`:''}
+ </article>`).join('');
+}
+function openPerson(pid){
+ const p=people.find(x=>x.id===pid); if(!p)return;
+ const entries=journal.filter(e=>(e.mentions||[]).includes(pid));
+ document.getElementById('personModal').innerHTML=`
+ <div class="profileTop"><div><h2>${esc(p.name)}</h2><div class="relation">${esc(p.relationship||'')}</div></div><button class="close" onclick="closeAll()">×</button></div>
+ <div class="section"><div class="barlabel"><span>Friendship ↔ Enemy</span><b>${p.friendship||0}%</b></div><div class="bar"><div class="fill friend" style="width:${p.friendship||0}%"></div></div>
+ ${(p.romance||0)>0?`<div class="barlabel"><span>Romantic interest</span><b>${p.romance}%</b></div><div class="bar"><div class="fill romance" style="width:${p.romance}%"></div></div>`:''}</div>
+ <div class="section"><h3>Notes</h3><div class="note">${esc(p.notes||'No notes yet.')}</div></div>
+ <div class="section"><h3>Entries featured in…</h3>${entries.length?entries.map(e=>`<div class="entry"><h3>${esc(e.title)}</h3><time>${esc(e.date)}</time><p>${esc(e.text)}</p></div>`).join(''):'<div class="empty">No journal entries mention this person yet.</div>'}</div>
+ <div class="modalactions"><button class="danger" onclick="deletePerson('${p.id}')">Delete</button><button class="ghost" onclick="editPerson('${p.id}')">Edit</button></div>`;
+ document.getElementById('personOverlay').classList.add('show');
+}
+function editPerson(pid){
+ const p=people.find(x=>x.id===pid); editingPerson=pid;
+ document.getElementById('personModal').innerHTML=`<h2>Edit profile</h2>
+ <div class="field"><label>Name</label><input id="pname" value="${esc(p.name)}"></div>
+ <div class="field"><label>Relationship</label><input id="prel" value="${esc(p.relationship||'')}"></div>
+ <div class="field"><label>Friendship ↔ Enemy: <span id="fv">${p.friendship||0}</span>%</label><input id="friend" class="range" type="range" min="0" max="100" value="${p.friendship||0}" oninput="fv.textContent=this.value"></div>
+ <div class="field"><label>Romantic interest: <span id="rv">${p.romance||0}</span>%</label><input id="romance" class="range" type="range" min="0" max="100" value="${p.romance||0}" oninput="rv.textContent=this.value"></div>
+ <div class="field"><label>Notes</label><textarea id="pnotes">${esc(p.notes||'')}</textarea></div>
+ <div class="field"><label>Tabs</label><div class="checkgrid">${categories.length?categories.map(c=>`<label class="check"><input type="checkbox" class="pcat" value="${c.id}" ${(p.categories||[]).includes(c.id)?'checked':''}>${esc(c.name)}</label>`).join(''):'<span class="sub">Create tabs from Manage tabs.</span>'}</div></div>
+ <div class="modalactions"><button class="ghost" onclick="closeAll()">Cancel</button><button class="primary" onclick="savePersonEdit()">Save</button></div>`;
+}
+function addPerson(){
+ editingPerson=null;
+ document.getElementById('personModal').innerHTML=`<h2>New Heartline profile</h2>
+ <div class="field"><label>Name</label><input id="pname" placeholder="Name"></div>
+ <div class="field"><label>Relationship</label><input id="prel" placeholder="Friend, sibling, classmate…"></div>
+ <div class="field"><label>Friendship ↔ Enemy: <span id="fv">50</span>%</label><input id="friend" class="range" type="range" min="0" max="100" value="50" oninput="fv.textContent=this.value"></div>
+ <div class="field"><label>Romantic interest: <span id="rv">0</span>%</label><input id="romance" class="range" type="range" min="0" max="100" value="0" oninput="rv.textContent=this.value"></div>
+ <div class="field"><label>Notes</label><textarea id="pnotes" placeholder="Anything you want to remember…"></textarea></div>
+ <div class="field"><label>Tabs</label><div class="checkgrid">${categories.length?categories.map(c=>`<label class="check"><input type="checkbox" class="pcat" value="${c.id}">${esc(c.name)}</label>`).join(''):'<span class="sub">Create tabs from Manage tabs.</span>'}</div></div>
+ <div class="modalactions"><button class="ghost" onclick="closeAll()">Cancel</button><button class="primary" onclick="savePersonEdit()">Create</button></div>`;
+ document.getElementById('personOverlay').classList.add('show');
+}
+function savePersonEdit(){
+ const p={id:editingPerson||id(),name:document.getElementById('pname').value.trim()||'Unnamed',relationship:document.getElementById('prel').value.trim(),friendship:+document.getElementById('friend').value,romance:+document.getElementById('romance').value,notes:document.getElementById('pnotes').value,categories:[...document.querySelectorAll('.pcat:checked')].map(x=>x.value)};
+ if(editingPerson){let i=people.findIndex(x=>x.id===editingPerson);people[i]=p}else people.push(p);
+ save();closeAll();renderPeople();
+}
+function deletePerson(pid){if(!confirm('Delete this Heartline profile?'))return;people=people.filter(p=>p.id!==pid);journal.forEach(e=>e.mentions=(e.mentions||[]).filter(x=>x!==pid));save();closeAll();renderPeople()}
+
+function addCategory(){
+ const name=prompt('New tab name:'); if(!name?.trim())return;
+ const c={id:id(),name:name.trim()};categories.push(c);save();activeCat=c.id;renderPeople();
+}
+function manageCats(){
+ document.getElementById('catModal').innerHTML=`<h2>Manage tabs</h2>
+ <div class="sub">These are your custom Heartline categories.</div>
+ <div style="margin-top:14px;display:grid;gap:8px">${categories.length?categories.map(c=>`<div class="card" style="padding:11px;display:flex;justify-content:space-between;align-items:center"><b>${esc(c.name)}</b><span><button class="ghost" onclick="renameCat('${c.id}')">Rename</button> <button class="danger" onclick="deleteCat('${c.id}')">Delete</button></span></div>`).join(''):'<div class="empty">No custom tabs yet.</div>'}</div>
+ <div class="modalactions"><button class="primary" onclick="addCategory();closeCat()">＋ New tab</button><button class="ghost" onclick="closeCat()">Done</button></div>`;
+ document.getElementById('catOverlay').classList.add('show');
+}
+function renameCat(cid){const c=categories.find(x=>x.id===cid),n=prompt('Rename tab:',c.name);if(n?.trim()){c.name=n.trim();save();manageCats();renderPeople()}}
+function deleteCat(cid){const c=categories.find(x=>x.id===cid);if(!confirm('Delete "'+c.name+'"? People will stay in Heartline, but this tab will be removed.'))return;categories=categories.filter(x=>x.id!==cid);people.forEach(p=>p.categories=(p.categories||[]).filter(x=>x!==cid));if(activeCat===cid)activeCat='all';save();manageCats();renderPeople()}
+function closeCat(){document.getElementById('catOverlay').classList.remove('show')}
+
+function renderJournal(){
+ const l=document.getElementById('journalList');
+ if(!journal.length){l.innerHTML='<div class="empty">Your journal is empty. Write your first entry! :3</div>';return}
+ l.innerHTML=journal.slice().sort((a,b)=>b.created-a.created).map(e=>`<article class="entry"><h3>${esc(e.title)}</h3><time>${esc(e.date)}</time><div class="mentions" style="margin-top:8px">${(e.mentions||[]).map(pid=>`<span class="mention">♡ ${esc(personName(pid))}</span>`).join('')}</div><p>${esc(e.text)}</p><div class="modalactions"><button class="danger" onclick="deleteEntry('${e.id}')">Delete</button><button class="ghost" onclick="editEntry('${e.id}')">Edit</button></div></article>`).join('');
+}
+function newEntry(){editingEntry=null;entryForm()}
+function editEntry(eid){editingEntry=eid;entryForm()}
+function entryForm(){
+ const e=journal.find(x=>x.id===editingEntry)||{title:'',text:'',mentions:[]};
+ document.getElementById('entryModal').innerHTML=`<h2>${editingEntry?'Edit journal entry':'New journal entry'}</h2>
+ <div class="field"><label>Title</label><input id="etitle" value="${esc(e.title)}" placeholder="What happened?"></div>
+ <div class="field"><label>Date</label><input id="edate" type="date" value="${e.date||new Date().toISOString().slice(0,10)}"></div>
+ <div class="field"><label>Entry</label><textarea id="etext" placeholder="Write here…">${esc(e.text)}</textarea></div>
+ <div class="field"><label>Mention Heartline people</label><div class="checkgrid">${people.length?people.map(p=>`<label class="check"><input type="checkbox" class="mentionbox" value="${p.id}" ${(e.mentions||[]).includes(p.id)?'checked':''}>${esc(p.name)}</label>`).join(''):'<span class="sub">Add a Heartline person first.</span>'}</div></div>
+ <div class="modalactions"><button class="ghost" onclick="closeAll()">Cancel</button><button class="primary" onclick="saveEntry()">Save entry</button></div>`;
+ document.getElementById('entryOverlay').classList.add('show');
+}
+function saveEntry(){
+ const e={id:editingEntry||id(),title:document.getElementById('etitle').value.trim()||'Untitled entry',date:document.getElementById('edate').value,text:document.getElementById('etext').value,mentions:[...document.querySelectorAll('.mentionbox:checked')].map(x=>x.value),created:Date.now()};
+ if(editingEntry){const old=journal.find(x=>x.id===editingEntry);e.created=old.created;journal[journal.findIndex(x=>x.id===editingEntry)]=e}else journal.push(e);
+ save();closeAll();renderJournal();
+}
+function deleteEntry(eid){if(!confirm('Delete this journal entry?'))return;journal=journal.filter(e=>e.id!==eid);save();renderJournal()}
+
+function closeAll(){document.querySelectorAll('.overlay').forEach(x=>x.classList.remove('show'));editingPerson=null;editingEntry=null}
+document.getElementById('addBtn').onclick=()=>{addPerson();document.getElementById('personOverlay').classList.add('show')};
+document.getElementById('newEntry').onclick=()=>{newEntry();document.getElementById('entryOverlay').classList.add('show')};
+document.getElementById('manageCats').onclick=manageCats;
+document.getElementById('peopleTab').onclick=()=>{document.getElementById('peopleView').style.display='block';document.getElementById('journalView').style.display='none';peopleTab.classList.add('active');journalTab.classList.remove('active');renderPeople()};
+document.getElementById('journalTab').onclick=()=>{document.getElementById('peopleView').style.display='none';document.getElementById('journalView').style.display='block';journalTab.classList.add('active');peopleTab.classList.remove('active');renderJournal()};
+document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)closeAll()}));
+renderPeople();renderJournal();
+</script>
+</body>
+</html>
